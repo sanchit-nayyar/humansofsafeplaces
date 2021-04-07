@@ -6,6 +6,11 @@ words = words.split(' ')
 
 from word_forms.word_forms import get_word_forms
 
+import json
+secInfo = open('securityInfo.json').read()
+t = json.loads(secInfo)
+print()
+
 baseList = []
 
 for word in words:
@@ -24,7 +29,7 @@ from instaloader import Instaloader, Hashtag
 tagName = 'bull'
 
 L = Instaloader()
-L.login('<<username>>', '<<password>>')
+L.login(t['Username'], t['Password'])
 
 
 M = {}
