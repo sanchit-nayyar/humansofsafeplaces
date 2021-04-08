@@ -1,15 +1,16 @@
+from instaloader import Instaloader, Hashtag
+from word_forms.word_forms import get_word_forms
+import json, sys
+
 f = open('story.txt')
-words = f.read().replace('\n', ' ')
+words = f.read().replace('\n', ' ').replace(',', '')
 while '  ' in words:
 	words = words.replace('  ', ' ')
 words = words.split(' ')
 
-from word_forms.word_forms import get_word_forms
 
-import json
 secInfo = open('securityInfo.json').read()
 t = json.loads(secInfo)
-print()
 
 baseList = []
 
@@ -25,13 +26,8 @@ baseSet = set(baseList)
 
 print(set(baseList))
 
-from instaloader import Instaloader, Hashtag
-
-tagName = 'bull'
-
 L = Instaloader()
 L.login(t['Username'], t['Password'])
-
 
 M = {}
 
@@ -39,13 +35,14 @@ g = len(baseSet)
 cm = 1
 
 f = open('backup.csv')
+fCont = f.read()
 
-existingSet = [i.split(',')[0] for i in f.read()[:-1].split('\n')]
-existingValues = [i.split(',')[1] for i in f.read()[:-1].split('\n')]
+existingSet = [i.split(',')[0] for i in fCont[:-1].split('\n')]
+existingValues = [i.split(',')[1] for i in fCont[:-1].split('\n')]
 
 f.close()
 
-f.open('backup.csv', 'a')
+f = open('backup.csv', 'a')
 
 for tagName in baseSet:
 	print(tagName, "Analysing - ", cm, "/", g)
@@ -53,27 +50,27 @@ for tagName in baseSet:
 	n = -1
 	try:
 		n = existingSet.index(tagName)
-		M[tagName] = existingValues[n]
+		M[tagName] = int(existingValues[n])
 	except ValueError:
 		print('Tag not found in backup. Fetching information from Instagram')
 	if n == -1:
 		try:
 			tag = Hashtag.from_name(L.context, tagName)
-			M[tagName] = tag.mediacount
+			M[tagName] = int(tag.mediacount)
 			f.write(tagName + "," + str(M[tagName]) + '\n')
-		except:
-			print('Hashtag not found in Instagram')
+		except Exception:
+			print('Hashtag not found in Instagram', str(E))
 			f.write(tagName + ",-1\n")
 # print([i.name for i in tag.get_related_tags()])
 
 f.close()
 
-M2 = sorted(M.items(), key=lambda x: x[1])
+M2 = sorted(M.items(), key=lambda x: x[1], reverse = True)
 
 
 c = 0
 for i in M2:
 	c += 1
-	if c > 10:
+	if c > int(sys.argv[1]):
 		break
 	print(i)
