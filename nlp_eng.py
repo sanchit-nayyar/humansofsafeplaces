@@ -15,6 +15,7 @@ baseList = []
 
 for word in words:
 	D = get_word_forms(word)
+	baseList.append(word)
 	for k in D:
 		for i in D[k]:
 			if "'" not in i and '"' not in i:
