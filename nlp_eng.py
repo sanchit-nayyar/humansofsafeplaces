@@ -37,26 +37,41 @@ M = {}
 g = len(baseSet)
 cm = 1
 
-f = open('backup.csv', 'w')
+f = open('backup.csv')
+
+existingSet = [i.split(',')[0] for i in f.read()[:-1].split('\n')]
+existingValues = [i.split(',')[1] for i in f.read()[:-1].split('\n')]
+
+f.close()
+
+f.open('backup.csv', 'a')
 
 for tagName in baseSet:
 	print(tagName, "Analysing - ", cm, "/", g)
 	cm += 1
+	n = -1
 	try:
-		tag = Hashtag.from_name(L.context, tagName)
-		M[tagName] = tag.mediacount
-		f.write(tagName + "," + str(M[tagName]) + '\n')
-	except:
-		print('Hashtag not found in Instagram')
+		n = existingSet.index(tagName)
+		M[tagName] = existingValues[n]
+	except ValueError:
+		print('Tag not found in backup. Fetching information from Instagram')
+	if n == -1:
+		try:
+			tag = Hashtag.from_name(L.context, tagName)
+			M[tagName] = tag.mediacount
+			f.write(tagName + "," + str(M[tagName]) + '\n')
+		except:
+			print('Hashtag not found in Instagram')
+			f.write(tagName + ",-1\n")
 # print([i.name for i in tag.get_related_tags()])
 
 f.close()
 
-sorted(M.items(), key=lambda x: x[1])
+M2 = sorted(M.items(), key=lambda x: x[1])
 
 
 c = 0
-for i in M:
+for i in M2:
 	c += 1
 	if c > 10:
 		break
