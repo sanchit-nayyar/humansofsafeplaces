@@ -1,6 +1,6 @@
 from instaloader import Instaloader, Hashtag
 from word_forms.word_forms import get_word_forms
-import json, sys
+import json, sys, os
 
 f = open('story.txt')
 words = f.read().replace('\n', ' ').replace(',', '')
@@ -33,6 +33,9 @@ M = {}
 
 g = len(baseSet)
 cm = 1
+
+if not os.path.exists('backup.csv'):
+	os.system('touch backup.csv')
 
 f = open('backup.csv')
 fCont = f.read()

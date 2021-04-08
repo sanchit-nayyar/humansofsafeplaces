@@ -14,5 +14,5 @@ Add story content in story.txt file
 
 Then execute
 ```
-python nlp_eng.py
+python nlp_eng.py <<Number-of-hashtags-to-print>>
 ```
