@@ -1,12 +1,18 @@
 from instaloader import Instaloader, Hashtag
 from word_forms.word_forms import get_word_forms
+import matplotlib.pyplot as plt
 import json, sys, os
 
 f = open('story.txt')
 words = f.read().replace('\n', ' ').replace(',', '')
+f.close()
 while '  ' in words:
 	words = words.replace('  ', ' ')
 words = words.split(' ')
+
+f = open('suggested_hashtags.txt')
+suggested_hashtags = set(f.read().split('\n'))
+f.close()
 
 
 secInfo = open('securityInfo.json').read()
@@ -73,7 +79,36 @@ M2 = sorted(M.items(), key=lambda x: x[1], reverse = True)
 
 c = 0
 for i in M2:
-	c += 1
-	if c > int(sys.argv[1]):
-		break
-	print(i)
+	if i not in suggested_hashtags:
+		c += 1
+		if c > int(sys.argv[1]):
+			break
+		print(i)
+
+HashtagList = list(suggested_hashtags)
+HashtagPosts = []
+
+f = open('backup.csv', 'a')
+
+for tag in HashtagList:
+	n = -1
+	try:
+		n = existingSet.index(tag)
+		HashtagPosts.append(int(existingValues[n]))
+	except ValueError:
+		print('Tag not found in backup. Fetching information from Instagram')
+	if n == -1:
+		try:
+			tagX = Hashtag.from_name(L.context, tag)
+			HashtagPosts.append(int(tagX.mediacount))
+			f.write(tag + "," + str(HashtagPosts[-1]) + '\n')
+		except:
+			HashtagPosts.append(0)
+			f.write(tag + ",-1\n")
+
+
+plt.bar(HashtagList, HashtagPosts)
+plt.title('Hashtag Trend Analysis')
+plt.xlabel('Tag Name')
+plt.ylabel('Reach Metric')
+plt.show()
