@@ -21,7 +21,7 @@ L = Instaloader()
 L.login(t['Username'], t['Password'])
 
 for row in hashtagset:
-	hashtagdesc = hashtagset.split(',')
+	hashtagdesc = row.split(',')
 	hashtagname = hashtagdesc[0]
 	hashtagcnt = hashtagdesc[1]
 	if k in [1, 2] and hashtagcnt != '-1':
